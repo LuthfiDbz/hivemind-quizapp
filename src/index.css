@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@theme {
+  --color-neo-blue: #155dfc;
+  --color-neo-pink: #fb64b6;
+  --color-neo-green: #00c758;
+  --color-neo-yellow: #fac800;
+  --color-neo-orange: #fe6e00;
+  --color-neo-bg: #fefce8;
+  --shadow-neo: 4px 4px 0px 0px rgba(0,0,0,1);
+  --shadow-neo-lg: 8px 8px 0px 0px rgba(0,0,0,1);
+}
+
+@layer base {
+  body {
+    @apply bg-neo-bg text-black font-sans antialiased;
+  }
+}
