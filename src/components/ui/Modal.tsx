@@ -21,7 +21,7 @@ export function Modal({ isOpen, onClose, title, children, className, ...props }:
       {/* Modal Content */}
       <div 
         className={cn(
-          "relative z-10 w-full max-w-md bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]",
+          "relative z-10 w-full max-w-md bg-white border-4 border-black shadow-neo-lg",
           "p-6 transform transition-all",
           className
         )}
@@ -29,7 +29,7 @@ export function Modal({ isOpen, onClose, title, children, className, ...props }:
       >
         <button 
           onClick={onClose}
-          className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center bg-neo-pink border-2 border-black font-bold text-xl hover:translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-none transition-all"
+          className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center bg-neo-pink border-2 border-black font-bold text-xl hover:translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-none transition-all cursor-pointer"
           aria-label="Close"
         >
           &times;

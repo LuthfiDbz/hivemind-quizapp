@@ -108,7 +108,7 @@ export function QuizResult() {
       {/* Hidden element just for html2canvas rendering */}
       <div 
         ref={printRef} 
-        className="absolute top-[-9999px] left-[-9999px] w-[400px] h-[700px] bg-neo-bg flex flex-col items-center justify-center p-8 border-8 border-black z-[-1]"
+        className="absolute top-[-9999px] left-[-9999px] w-100 h-175 bg-neo-bg flex flex-col items-center justify-center p-8 border-8 border-black z-[-1]"
       >
         <h1 className="text-4xl font-black uppercase mb-8 flex items-center gap-2">
           <Trophy className="text-neo-blue" size={40} />

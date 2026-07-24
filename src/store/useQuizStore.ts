@@ -14,8 +14,14 @@ interface QuizState {
   activeMode: QuizMode;
   setActiveMode: (mode: QuizMode) => void;
 
+  selectedTopic: string;
+  setSelectedTopic: (topic: string) => void;
+
   selectedCategory: string;
   setSelectedCategory: (category: string) => void;
+
+  topics: { id: string; name: string; slug: string; categories: { id: string; name: string; slug: string }[] }[];
+  setTopics: (topics: { id: string; name: string; slug: string; categories: { id: string; name: string; slug: string }[] }[]) => void;
 
   questionBank: Record<string, QuizQuestion[]>;
   addQuestionsToBank: (category: string, questions: QuizQuestion[]) => void;
@@ -36,8 +42,14 @@ export const useQuizStore = create<QuizState>((set) => ({
   activeMode: null,
   setActiveMode: (mode) => set({ activeMode: mode }),
 
+  selectedTopic: 'Random',
+  setSelectedTopic: (topic) => set({ selectedTopic: topic }),
+
   selectedCategory: 'Random',
   setSelectedCategory: (category) => set({ selectedCategory: category }),
+
+  topics: [],
+  setTopics: (topics) => set({ topics }),
 
   questionBank: {},
   addQuestionsToBank: (category, questions) => set((state) => ({

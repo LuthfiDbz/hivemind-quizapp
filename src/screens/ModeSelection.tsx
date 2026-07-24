@@ -3,6 +3,7 @@ import { useQuizStore, type QuizMode } from '../store/useQuizStore';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
+import { Select } from '../components/ui/Select';
 import { Brain, HelpCircle, Flame, Target } from 'lucide-react';
 
 export function ModeSelection() {
@@ -48,17 +49,21 @@ export function ModeSelection() {
   const activeModeDetails = getModeDetails(selectedMode);
 
   return (
-    <div className="min-h-screen bg-neo-bg p-8">
-      <div className="max-w-4xl mx-auto space-y-8">
-        <header className="flex justify-between items-center bg-white p-4 border-4 border-black shadow-neo">
+    <div className="min-h-screen bg-neo-bg p-8 pt-10">
+      <div className=" space-y-8">
+        <header className="max-w-5xl mx-auto flex justify-between items-center bg-white p-4 border-4 border-black shadow-neo">
           <h1 className="text-2xl font-black">HIVEMIND</h1>
           <p className="font-bold text-lg text-neo-blue">Hi, {userName}!</p>
         </header>
 
-        <div className="space-y-4">
-          <h2 className="text-4xl font-black uppercase text-center transform -rotate-1 py-4">Select Quiz Mode</h2>
+        <div className="max-w-4xl mx-auto space-y-8 mt-12">
+          <div className="flex justify-center">
+            <h2 className="text-4xl md:text-3xl font-black uppercase text-center transform -rotate-2 bg-neo-yellow border-4 border-black px-8 py-4 shadow-neo-lg inline-block">
+              Select Quiz Mode
+            </h2>
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
             <Card 
               variant="blue" 
               className="p-6 cursor-pointer hover:-translate-y-1 hover:shadow-neo-lg transition-all"
@@ -66,7 +71,7 @@ export function ModeSelection() {
             >
               <Brain size={48} className="mb-4 text-white" />
               <h3 className="text-2xl font-bold text-white uppercase">Classic Trivia</h3>
-              <p className="text-white/90 font-medium">15s Timer, Dynamic Scoring</p>
+              <p className="text-white/90 font-medium">30s Timer, Dynamic Scoring</p>
             </Card>
 
             <Card 
@@ -113,22 +118,41 @@ export function ModeSelection() {
         </p>
 
         {selectedMode === 'classic' && (
-          <div className="mb-6 space-y-2">
-            <label className="font-bold block">Select Category:</label>
-            <select 
-              className="w-full border-4 border-black p-3 font-bold text-black outline-none focus:translate-x-1 focus:-translate-y-1 transition-transform"
-              value={useQuizStore.getState().selectedCategory}
-              onChange={(e) => useQuizStore.getState().setSelectedCategory(e.target.value)}
-            >
-              <option value="Random">Random</option>
-              <option value="Linux">Linux</option>
-              <option value="DevOps">DevOps</option>
-              <option value="Networking">Networking</option>
-              <option value="Programming">Programming</option>
-              <option value="Cloud">Cloud</option>
-              <option value="Docker">Docker</option>
-              <option value="Kubernetes">Kubernetes</option>
-            </select>
+          <div className="mb-6 space-y-4">
+            <div className="space-y-2">
+              <label className="font-bold block text-lg">Select Topic:</label>
+              <Select 
+                options={[
+                  { value: 'Random', label: 'Random' },
+                  ...useQuizStore.getState().topics.map(t => ({ value: t.name, label: t.name }))
+                ]}
+                value={useQuizStore.getState().selectedTopic}
+                onChange={(val) => {
+                  useQuizStore.getState().setSelectedTopic(val);
+                  useQuizStore.getState().setSelectedCategory('Random');
+                }}
+              />
+            </div>
+
+            {useQuizStore.getState().selectedTopic !== 'Random' && (() => {
+              const currentTopic = useQuizStore.getState().topics.find(t => t.name === useQuizStore.getState().selectedTopic);
+              if (currentTopic && currentTopic.categories.length > 0) {
+                return (
+                  <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                    <label className="font-bold block text-lg">Select Category:</label>
+                    <Select 
+                      options={[
+                        { value: 'Random', label: `All ${currentTopic.name}` },
+                        ...currentTopic.categories.map(c => ({ value: c.name, label: c.name }))
+                      ]}
+                      value={useQuizStore.getState().selectedCategory}
+                      onChange={(val) => useQuizStore.getState().setSelectedCategory(val)}
+                    />
+                  </div>
+                );
+              }
+              return null;
+            })()}
           </div>
         )}
         

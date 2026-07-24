@@ -1,17 +1,27 @@
 import { useState } from 'react';
 import { useQuizStore } from '../store/useQuizStore';
+import { fetchTopics } from '../services/api';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { BrainCircuit, ArrowRight, Sparkles } from 'lucide-react';
+import { BrainCircuit, ArrowRight, Sparkles, Loader2 } from 'lucide-react';
 
 export function Home() {
-  const { setUserName, setCurrentScreen } = useQuizStore();
+  const { setUserName, setCurrentScreen, setTopics } = useQuizStore();
   const [inputValue, setInputValue] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleStart = (e: React.FormEvent) => {
+  const handleStart = async (e: React.FormEvent) => {
     e.preventDefault();
     if (inputValue.trim()) {
+      setIsLoading(true);
+      try {
+        const fetchedTopics = await fetchTopics();
+        setTopics(fetchedTopics);
+      } catch (err) {
+        console.error("Failed to load topics", err);
+      }
+      setIsLoading(false);
       setUserName(inputValue);
       setCurrentScreen('modes');
     }
@@ -58,9 +68,15 @@ export function Home() {
             />
           </div>
           
-          <Button type="submit" variant="primary" className="flex items-center justify-center gap-2 w-full text-xl group">
-            LET'S GO! 
-            <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+          <Button type="submit" variant="primary" disabled={isLoading} className="flex items-center justify-center gap-2 w-full text-xl group">
+            {isLoading ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <>
+                LET'S GO! 
+                <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+              </>
+            )}
           </Button>
         </form>
       </Card>

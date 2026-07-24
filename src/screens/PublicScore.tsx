@@ -44,7 +44,7 @@ export function PublicScore() {
         </div>
         
         <p className="text-xl font-bold mb-8">
-          in <span className="uppercase text-neo-pink bg-white text-black px-2 py-1 border-2 border-black">{mode}</span> mode!
+          in <span className="uppercase text-neo-pink bg-white px-2 py-1 border-2 border-black">{mode}</span> mode!
         </p>
 
         <Button variant="warning" onClick={handlePlayNow} className="w-full text-xl py-4 flex items-center justify-center gap-2 group">

@@ -13,11 +13,12 @@ export function QuizPlayer() {
   
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(15);
+  const [timeLeft, setTimeLeft] = useState(30);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   
   const [showQuitModal, setShowQuitModal] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [isReady, setIsReady] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -61,15 +62,15 @@ export function QuizPlayer() {
   }, [isInitializing, selectedCategory]);
 
   useEffect(() => {
-    // If answered or time ran out, don't tick the timer
-    if (selectedAnswer || timeLeft <= 0 || questions.length === 0) return;
+    // If not ready, answered, time ran out, or no questions, don't tick
+    if (!isReady || selectedAnswer || timeLeft <= 0 || questions.length === 0) return;
     
     const timer = setInterval(() => {
       setTimeLeft(prev => prev - 1);
     }, 1000);
     
     return () => clearInterval(timer);
-  }, [timeLeft, selectedAnswer, questions]);
+  }, [isReady, timeLeft, selectedAnswer, questions]);
 
   const handleAnswerClick = (answerId: string, isCorrect: boolean) => {
     if (selectedAnswer) return; // Prevent multiple clicks
@@ -78,8 +79,8 @@ export function QuizPlayer() {
     if (isCorrect) {
       let points = 100;
       if (timeLeft <= 0) points = 25;
-      else if (timeLeft <= 5) points = 50;
-      else if (timeLeft <= 10) points = 75;
+      else if (timeLeft <= 10) points = 50;
+      else if (timeLeft <= 20) points = 75;
       addScore(points);
     }
   };
@@ -87,7 +88,7 @@ export function QuizPlayer() {
   const handleNextQuestion = () => {
     if (currentIndex + 1 < questions.length) {
       setCurrentIndex(prev => prev + 1);
-      setTimeLeft(15);
+      setTimeLeft(30);
       setSelectedAnswer(null);
     } else {
       setCurrentScreen('result');
@@ -123,6 +124,24 @@ export function QuizPlayer() {
     );
   }
 
+  if (!isReady) {
+    return (
+      <div className="min-h-screen bg-neo-bg flex items-center justify-center p-4">
+        <Card variant="green" className="p-8 max-w-lg w-full text-center">
+          <h2 className="text-4xl font-black mb-4 uppercase">Quiz is Ready!</h2>
+          <p className="font-bold text-lg mb-8">
+            You will face 10 questions from the 
+            <span className="bg-neo-yellow px-2 py-1 border-2 border-black mx-2 uppercase inline-block my-2">{selectedCategory}</span> 
+            category. Answer as fast as you can!
+          </p>
+          <Button onClick={() => setIsReady(true)} variant="warning" className="w-full text-xl py-4 uppercase">
+            Start Quiz
+          </Button>
+        </Card>
+      </div>
+    );
+  }
+
   const currentQuestion = questions[currentIndex];
 
   const getButtonVariant = (ansId: string, isCorrect: boolean) => {
@@ -141,7 +160,7 @@ export function QuizPlayer() {
         <div className="flex items-center gap-4">
           <button 
             onClick={() => setShowQuitModal(true)}
-            className="w-10 h-10 flex items-center justify-center bg-neo-pink border-2 border-black hover:-translate-y-1 hover:shadow-neo transition-all"
+            className="w-10 h-10 flex items-center justify-center bg-neo-pink border-2 border-black hover:-translate-y-1 hover:shadow-neo transition-all cursor-pointer"
             aria-label="Quit game"
           >
             <Home size={20} />
@@ -176,7 +195,7 @@ export function QuizPlayer() {
             <Button 
               key={ans.id}
               variant={getButtonVariant(ans.id, ans.isCorrect)}
-              className={`w-full text-left justify-start min-h-[80px] p-4 text-lg sm:text-xl ${!selectedAnswer ? 'hover:-translate-y-1 hover:shadow-neo' : 'pointer-events-none'}`}
+              className={`w-full text-left justify-start min-h-20 p-4 text-lg sm:text-xl ${!selectedAnswer ? 'hover:-translate-y-1 hover:shadow-neo' : 'pointer-events-none'}`}
               onClick={() => handleAnswerClick(ans.id, ans.isCorrect)}
             >
               {ans.text}
